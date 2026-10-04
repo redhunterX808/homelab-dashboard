@@ -28,6 +28,45 @@ jobs:
       - name: Build containers
         run: docker compose build
 
+      - name: Start containers
+        run: docker compose up -d
+
+      - name: Wait for application
+        run: |
+          for attempt in {1..15}; do
+            echo "Smoke-test attempt ${attempt}/15"
+
+            if curl --fail --silent --show-error \
+              --max-time 3 \
+              http://localhost:8080 \
+              > /dev/null; then
+
+              echo "Application is responding."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "Application did not become ready."
+
+          docker compose ps
+          docker compose logs --tail=100
+
+          exit 1
+
+      - name: Show container status
+        if: always()
+        run: docker compose ps
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs --tail=100
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down --remove-orphans
+
   security:
     name: Security
     runs-on: ubuntu-latest
