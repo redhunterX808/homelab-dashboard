@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111827" />
+    <title>Homelab Dashboard</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0b1120;
+        color: #e5e7eb;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        padding: clamp(1.25rem, 5vw, 4rem);
+      }
+
+      main { width: min(100%, 64rem); margin: 0 auto; }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+      }
+
+      h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.25rem); letter-spacing: -0.04em; }
+
+      .environment {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        border: 1px solid #334155;
+        border-radius: 999px;
+        color: #cbd5e1;
+        font-size: 0.875rem;
+        white-space: nowrap;
+      }
+
+      .environment::before {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: #60a5fa;
+        content: "";
+      }
+
+      .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+
+      article {
+        min-height: 9rem;
+        padding: 1.25rem;
+        border: 1px solid #253147;
+        border-radius: 0.875rem;
+        background: #111a2b;
+      }
+
+      h2 { margin: 0 0 1.5rem; font-size: 1rem; font-weight: 600; }
+      .status { margin: 0; color: #94a3b8; font-size: 0.9rem; }
+
+      @media (max-width: 480px) {
+        header { align-items: flex-start; flex-direction: column; }
+        .cards { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Homelab Dashboard</h1>
+        <span class="environment">Development</span>
+      </header>
+      <section class="cards" aria-label="Dashboard overview">
+        <article><h2>Services</h2><p class="status">Status: Placeholder</p></article>
+        <article><h2>Docker</h2><p class="status">Status: Placeholder</p></article>
+        <article><h2>Storage</h2><p class="status">Status: Placeholder</p></article>
+        <article><h2>Backups</h2><p class="status">Status: Placeholder</p></article>
+      </section>
+    </main>
+  </body>
+</html>
