@@ -1,5 +1,5 @@
-FROM alpine:latest
+FROM nginx:alpine
 
-WORKDIR /app
+COPY index.html /usr/share/nginx/html/index.html
 
-CMD ["sh", "-c", "echo 'Application template container started' && sleep infinity"]
+EXPOSE 80

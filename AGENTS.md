@@ -82,3 +82,33 @@ If a security check fails, identify and correct the underlying cause.
 Make the smallest change necessary to complete the requested task.
 
 Avoid unrelated refactoring unless explicitly requested.
+
+
+## Production Access
+
+The development agent must not:
+
+- SSH into production or homelab servers
+- modify production files
+- execute deployment commands directly
+- access production credentials
+- bypass GitHub Pull Requests
+
+Deployment is performed exclusively by the pull-based deployment system after changes reach the protected main branch.
+
+## Runtime Validation
+
+A successful Docker image build is not sufficient to consider a change valid.
+
+Before completing a task, run:
+
+./scripts/validate.sh
+
+Runtime validation must confirm that:
+
+- Docker Compose configuration is valid.
+- Images build successfully.
+- Containers remain running.
+- The configured smoke-test endpoint responds successfully.
+
+Do not consider the task complete if containers are restarting, unhealthy, exited, or the smoke test fails.
