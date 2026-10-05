@@ -23,13 +23,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate Docker Compose
-        run: docker compose config --quiet
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            config --quiet
 
       - name: Build containers
-        run: docker compose build
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            build
 
       - name: Start containers
-        run: docker compose up -d
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            up -d
 
       - name: Wait for application
         run: |
@@ -50,22 +62,41 @@ jobs:
 
           echo "Application did not become ready."
 
-          docker compose ps
-          docker compose logs --tail=100
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            ps
+
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            logs --tail=100
 
           exit 1
 
       - name: Show container status
         if: always()
-        run: docker compose ps
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            ps
 
       - name: Show logs on failure
         if: failure()
-        run: docker compose logs --tail=100
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            logs --tail=100
 
       - name: Stop containers
         if: always()
-        run: docker compose down --remove-orphans
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.dev.yaml \
+            down --remove-orphans
 
   security:
     name: Security

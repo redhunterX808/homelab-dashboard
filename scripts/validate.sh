@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+COMPOSE=(
+  docker compose
+  -f compose.yaml
+  -f compose.dev.yaml
+)
+
 SMOKE_URL="${SMOKE_URL:-http://localhost:8080}"
 SMOKE_TIMEOUT="${SMOKE_TIMEOUT:-30}"
 
 cleanup() {
     echo
     echo "== Cleanup =="
-    docker compose down --remove-orphans >/dev/null 2>&1 || true
+    "${COMPOSE[@]}" down --remove-orphans >/dev/null 2>&1 || true
 }
 
 trap cleanup EXIT
@@ -17,18 +23,18 @@ pre-commit run --all-files
 
 echo
 echo "== Docker Compose =="
-docker compose config --quiet
+"${COMPOSE[@]}" config --quiet
 
 echo
 echo "== Docker Build =="
-docker compose build
+"${COMPOSE[@]}" build
 
 echo
 echo "== Runtime Smoke Test =="
 
 # Guarantee that this test starts from a known state.
-docker compose down --remove-orphans >/dev/null 2>&1 || true
-docker compose up -d
+"${COMPOSE[@]}" down --remove-orphans >/dev/null 2>&1 || true
+"${COMPOSE[@]}" up -d
 
 echo "Waiting for application..."
 
@@ -36,17 +42,17 @@ elapsed=0
 
 while [ "$elapsed" -lt "$SMOKE_TIMEOUT" ]; do
     # A container that exited or entered a restart loop must fail validation.
-    if docker compose ps --status exited -q | grep -q .; then
+    if "${COMPOSE[@]}" ps --status exited -q | grep -q .; then
         echo "ERROR: one or more containers exited."
-        docker compose ps
-        docker compose logs --tail=100
+        "${COMPOSE[@]}" ps
+        "${COMPOSE[@]}" logs --tail=100
         exit 1
     fi
 
-    if docker compose ps --status restarting -q | grep -q .; then
+    if "${COMPOSE[@]}" ps --status restarting -q | grep -q .; then
         echo "ERROR: one or more containers are restarting."
-        docker compose ps
-        docker compose logs --tail=100
+        "${COMPOSE[@]}" ps
+        "${COMPOSE[@]}" logs --tail=100
         exit 1
     fi
 
@@ -67,10 +73,10 @@ done
 
 echo "ERROR: application did not become ready within ${SMOKE_TIMEOUT}s."
 
-docker compose ps
+"${COMPOSE[@]}" ps
 
 echo
 echo "== Container logs =="
-docker compose logs --tail=100
+"${COMPOSE[@]}" logs --tail=100
 
 exit 1
